@@ -1,0 +1,269 @@
+---
+title: "Cyclistic_Bike_Share_Case_Study"
+output:
+  pdf_document: default
+  word_document: default
+date: "2022-07-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse) 
+library(lubridate) 
+library(ggplot2) 
+getwd() 
+setwd("/Users/justi/OneDrive/Desktop/Data Science/Cyclistic Bike Share Case Study")
+```
+
+```{r}
+install.packages('formatR', repos = "http://cran.rstudio.com")
+
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+```
+
+
+###Problem Statement
+Cyclistic, a successful bike-share company, launched in 2016, slowly expanding across Chicago and gaining revenue. Within Cyclistic’s business model, there are various pricing plans that customers can choose to purchase. 
+
+The single-ride pass, full-day pass, and annual membership. Based on Cyclistic’s finance analysts, customers that purchase the annual membership are much more profitable than those that choose the single and full day passes. Therefore, in order for Cyclistic to generate more revenue and further grow, Cyclistic must figure out how to convert those casual riders to annual riders. This can be done by analyzing the differences between the current casual and annual riders. Looking at this data will allow Cyclistic to make an informed decision on how to maximize revenue in the near future.
+
+###Data Security & Organization
+The data is located on Cyclistic’s historical trip data website, from which we can download the data file. It is organized in an excel csv format, with data columns for unique ride-ids, type of bike ridden, ride-start and ride end time, start location names and ids, end-locations names and ids, starting and ending latitude and longitude numbers, and member status. There are no issues with credibility within this dataset because no rides have been omitted from the data. It represents the census of cyclistic rides, removing the chance of sampling bias or the chance that the dataset is not representative of the entire population. 
+
+Because this data has been made publicly available under the LLC data license agreement, we are able to use it without penalty or accessibility concerns. Data such as personal identification and credit card numbers have not been included within this dataset in order to protect and respect the rider’s right to privacy.
+
+To make sure that this dataset is ready for merging, cleaning, and analysis, we'll first have to ensure that all columns match up correctly. This includes renaming columns, rerouting data, and ensuring datatypes are consistent within each quarterly period to maintain an organized standard structure.
+
+```{r}
+#Load each quarterly dataset of the last year here
+q2_2019 <- read_csv("Divvy_Trips_2019_Q2.csv")
+q3_2019 <- read_csv("Divvy_Trips_2019_Q3.csv")
+q4_2019 <- read_csv("Divvy_Trips_2019_Q4.csv")
+q1_2020 <- read_csv("Divvy_Trips_2020_Q1.csv")
+```
+
+```{r}
+#Check that the names of the datasets are consistent
+
+colnames(q2_2019)
+colnames(q3_2019)
+colnames(q4_2019)
+colnames(q1_2020)
+```
+```{r}
+# Rename columns in 2019 to make them consistent with q1_2020, several columns were dropped in q1_2020
+
+(q2_2019 <- rename(q2_2019, ride_id = "01 - Rental Details Rental ID",rideable_type = "01 - Rental Details Bike ID",started_at = "01 - Rental Details Local Start Time",ended_at = "01 - Rental Details Local End Time",start_station_name = "03 - Rental Start Station Name",start_station_id = "03 - Rental Start Station ID",end_station_name = "02 - Rental End Station Name",end_station_id = "02 - Rental End Station ID",member_casual = "User Type"))
+
+(q3_2019 <- rename(q3_2019
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid 
+                   ,started_at = start_time  
+                   ,ended_at = end_time  
+                   ,start_station_name = from_station_name 
+                   ,start_station_id = from_station_id 
+                   ,end_station_name = to_station_name 
+                   ,end_station_id = to_station_id 
+                   ,member_casual = usertype))
+
+(q4_2019 <- rename(q4_2019
+                   ,ride_id = trip_id
+                   ,rideable_type = bikeid 
+                   ,started_at = start_time  
+                   ,ended_at = end_time  
+                   ,start_station_name = from_station_name 
+                   ,start_station_id = from_station_id 
+                   ,end_station_name = to_station_name 
+                   ,end_station_id = to_station_id 
+                   ,member_casual = usertype))
+
+
+```
+
+
+
+```{r}
+# Inspect the dataframes and look for incongruencies
+str(q2_2019)
+str(q3_2019)
+str(q4_2019)
+str(q1_2020)
+
+```
+```{r}
+# Convert ride_id and rideable_type to character so that they can stack correctly
+
+q2_2019 <-  mutate(q2_2019, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type)) 
+q3_2019 <-  mutate(q3_2019, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type)) 
+q4_2019 <-  mutate(q4_2019, ride_id = as.character(ride_id)
+                   ,rideable_type = as.character(rideable_type)) 
+```
+
+```{r}
+# Stack individual quarter's data frames into one big data frame
+
+all_trips <- bind_rows(q2_2019, q3_2019, q4_2019, q1_2020)
+```
+
+```{r}
+# Remove lat, long, birthyear, and gender fields as this data was dropped beginning in 2020
+all_trips <- all_trips %>%  
+  select(-c(start_lat, start_lng, end_lat, end_lng, birthyear, gender, "01 - Rental Details Duration In Seconds Uncapped", "05 - Member Details Member Birthday Year", "Member Gender", "tripduration"))
+```
+
+###Data Cleaning & Transformation
+
+After prepping the data, we'll move onto cleaning the dataset to make sure any unformatted, missing, or wrong data will be made consistent and clear in preparation for data transformation.
+
+New columns that are critical to the analysis of the dataset will be transformed from current columns using the "mutate" function.
+
+
+```{r}
+# Inspect the new table that has been created
+colnames(all_trips)
+nrow(all_trips)
+dim(all_trips)
+head(all_trips)
+str(all_trips)
+summary(all_trips)  
+```
+
+Issue #1: Within the "member_casual" column, there seem to be four different labels, Subscriber, member, customer, and casual. Based on the given information within the case study, customers should be labeled as either a member or a casual. This will be solved by renaming all subscribers as members and all customers as casual.
+
+Addition #1: The date and time stamps for this dataset are all combined into one character string and placed in either the "started_at" or "ended_at" columns. Splitting this data up into separate columns into time, day, month, and year will allow us to make more meaningful connections in our analysis
+
+Addition #2: Currently, there are columns that tell us the start_station id/name and the end_station id/name. This information is not quantifiable, meaning that we cannot utilize it in its raw state. To use it effectively, we will add a column called "ride_duration" that tells us how long it took to get from the start station to the end station.
+
+```{r} 
+#Issue 1
+all_trips <- all_trips %>% mutate(member_casual = recode(member_casual, "Subscriber" = "member", "Customer" = "casual"))
+```
+
+```{r}
+#Addition #1
+all_trips$date <- as.Date(all_trips$started_at)
+all_trips$month <- format(as.Date(all_trips$date), "%m")
+all_trips$day <- format(as.Date(all_trips$date), "%d")
+all_trips$year <- format(as.Date(all_trips$date), "%y")
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")
+all_trips$hour <- format(as.POSIXct(all_trips$started_at), "%H")
+```
+
+
+```{r}
+#Addition #2
+all_trips$ride_duration <- difftime(all_trips$ended_at,all_trips$started_at)
+```
+
+```{r}
+#checking for sign value in ride_duration column
+all_trips$sign_check <- sign(all_trips$ride_duration)
+
+3879822 - sum(all_trips$sign_check)
+
+#Since the above function doesn't output zero, it means that there are some zeros or negative ones within the sign check column. Because it doesn't match up with the total number of observations in our dataset, we can conclude there are negative ride durations within the column. There are also some rides where Cyclistic took the bikes out of service for maintenance. These all need to be removed and cleaned before continuing with the analysis.
+
+```
+
+```{r}
+#Clean the bad data from the dataset & create a new dataset
+
+all_trips_v2 <- all_trips[!(all_trips$start_station_name == "HQ QR" | all_trips$ride_duration<0),]
+```
+
+###Analysis
+
+We'll be analyzing the two different member types by first calculating different statistics that they each have and creating visualizations based off of those results. These will allow us to better visualize the data given. Our first graph will compare the number of rides per day between each group and our second one will compare the duration of each ride per day between each group. 
+
+```{r}
+#mean, median, max, min of all rides
+all_stats <- all_trips_v2 %>% summarize(mean = mean(ride_duration), median = median(ride_duration), max = max(ride_duration), min = min(ride_duration))
+all_stats
+
+#mean, median, max, min of members and casual customers
+all_stats_members <- all_trips_v2 %>% filter(member_casual == "member") %>% summarize(mean = mean(ride_duration), median = median(ride_duration), max = max(ride_duration), min = min(ride_duration))
+all_stats_members
+
+all_stats_casual <- all_trips_v2 %>% filter(member_casual == "casual") %>% summarize(mean = mean(ride_duration), median = median(ride_duration), max = max(ride_duration), min = min(ride_duration))
+all_stats_casual
+
+#average ride time per day split by members and casual
+all_trips_v2$day_of_week <- ordered(all_trips_v2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+avg_ride_time_per_day <- aggregate(all_trips_v2$ride_duration ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
+avg_ride_time_per_day
+
+```
+
+```{r}
+#Grouped data by member type and day of week
+grouped_data_week <- all_trips_v2 %>% group_by(member_casual, day_of_week) %>% summarise(number_of_rides = n(),average_duration = mean(ride_duration), .groups = 'drop') %>% arrange(member_casual, day_of_week)
+grouped_data_week
+
+```
+```{r}
+#Grouped data by member type and month
+grouped_data_month <- all_trips_v2 %>% group_by(member_casual, month) %>% summarise(number_of_rides = n(), .groups = 'drop') %>% arrange(member_casual, month)
+grouped_data_month
+```
+```{r}
+grouped_data_hour <- all_trips_v2 %>% group_by(member_casual, hour) %>% summarise(number_of_rides = n(), .groups = 'drop') %>% arrange(member_casual, hour)
+grouped_data_hour
+```
+
+
+```{r}
+#Line graph of number of bike rides per group per day (Graph #1)
+line_bikerides_per_group_per_day <- grouped_data_week %>% ggplot(aes(x = day_of_week, y = number_of_rides, group = member_casual, color = member_casual)) + geom_line() + labs(title = "Number of Rides per Day for each Member Type", x = "Day of Week", y = "Number of Rides")
+line_bikerides_per_group_per_day
+```
+
+```{r}
+#Bar graph of number of bike rides per group per day (Graph #2)
+bar_bikerides_per_group_per_day <- grouped_data_week %>% ggplot(aes(x = day_of_week, y = number_of_rides, fill = member_casual)) + geom_col(position = "dodge") + labs(title = "Number of Rides per Day for each Member Type", x = "Day of Week", y = "Number of Rides")
+bar_bikerides_per_group_per_day
+
+```
+```{r}
+#Line graph of average length of bike rides per group per day
+avg_length_line_bikerides_per_group_per_day <- grouped_data_week %>% ggplot(aes(x = day_of_week, y = average_duration, group = member_casual, color = member_casual)) + geom_line() + labs(title = "Average Duration of Rides per Day for each Member Type", x = "Day of Week", y = "Average Duration")
+avg_length_line_bikerides_per_group_per_day
+```
+
+```{r}
+#Bar graph of average length of bike rides per group per day (Graph #3)
+avg_length_bar_bikerides_per_group_per_day <- grouped_data_week %>% ggplot(aes(x = day_of_week, y = average_duration, fill = member_casual)) + geom_col(position = "dodge") + labs(title = "Average Duration of Rides per Day for each Member Type", x = "Day of Week", y = "Average Duration")
+avg_length_bar_bikerides_per_group_per_day
+```
+
+```{r}
+#number of rides per month for each member type
+bar_bikerides_per_group_per_month <- grouped_data_month %>% ggplot(aes(x = month, y = number_of_rides, fill = member_casual)) + geom_col(position = "dodge") + labs(title = "Number of Rides per Month for each Member Type", x = "Month", y = "Number of Rides")
+bar_bikerides_per_group_per_month
+```
+
+```{r}
+#Most frequent bike ride starting hour for each member type
+bar_num_bikerides_per_each_hour <- grouped_data_hour %>% ggplot(aes(x = hour, y = number_of_rides, fill = member_casual)) + geom_col(position = "dodge") + labs(title = "Number of Rides per Hour for each Member Type", x = "Hour", y = "Number of Rides")
+bar_num_bikerides_per_each_hour
+```
+
+
+Graph #1 & 2 (Number of Rides per Day for each Member Type): This graph shows that the number of rides for cyclistic members increase during the weekdays and greatly drop off during the weekends. However, for casual members this is the opposite. The number of rides increases during the weekends and decreases during the weekdays. This is likely because casual members are using the cyclistic bikes for weekend fun and excursions in Chicago. During the weekdays, the casual customers have to return back to work and don't have free time to use their bikes to sight-see and travel around the city. For Cyclistic members, these people most likely use their bike to travel to and from their workplaces. This can be further analyzed by creating a visualization for frequency of bike rides against time among cyclistic members. 
+
+Graph #3 & #4 (Average Duration of Rides per Day for each Member Type): Looking at the cyclistic members, the average duration is quite constant, with a slight increase on Sundays and Saturdays. The average duration for members is also much lower than the average duration for a casual member bike ride on all days. This provides further evidence towards cyclistic members using the bike service to go to and from their workplaces, as they travel the same distance every workday and only use the bike for that specific commute. Casual members have a much higher average duration across the entire week that vary from day to day. This provides evidence towards a more relaxed and longer bike ride, with them renting the bike for longer to go around the city to take in the views.
+
+Graph #5 (Number of Rides per Month for each Member Type): Looking at this graph, we can see that ride-share bike usage spikes during the summer months for both casual and member users. This is most likely due to the better weather outside, allowing them to get out and bike instead of staying indoors.
+
+Graph #6 (Number of Rides per Hour for each Member Type): Looking at the cyclistic members, we can see that the number of rides drastically spikes around 7 to 9 am and around 4 to 6 pm. This matches perfectly with the usual 8 hour workday cycle and tells us that a larger percentage of cyclistic members use the ride-share bikes to commute to work. For casual customers, the number of rides begins to ramp up from 7 am to 12 pm, slows down from 12 pm to 5 pm, and begins to drop back down at 5 pm. This graph confirms both our assumptions for why member usage spikes during the weekdays of the week and why casual usage spikes during the weekends. 
+
+#Advice for Marketing Analysis team
+
+Based upon our data analysis, we can say that the data points towards Cyclistic members utilizing the biking service for their commute to and from work. This is shown in the higher frequency of rides and a consistent average duration during the week days. Cyclistic casual customers most likely use the bike service in order to bike around the city for their own enjoyment, as shown by the increase of bike rides on the weekends and a more erratic pattern of average duration across the week.
+
+Thus, our data analyst team advises to target the marketing campaign towards an eco-friendly type of advertisement, encouraging people that live within Chicago to bike to work using their bike-share instead of driving. This not only paints Cyclistic in a good light, but also targets our main audience quite well, as many of the people that are Cyclistic members commute using their bikes. Additionally, these advertisement campaigns should be placed on our bikes and released on social media during prime commuting hours in order to reach as many potential future members. 
+
+In future analysis, more trends could be shown on a longer term basis. Data for when each of the members signed up for the membership and further analysis on monthly membership engagement/usage could be helpful towards our case study. It would allow for us to decide the most optimal time to release the advertisement in Chicago.
+
