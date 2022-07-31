@@ -1,10 +1,9 @@
 # Cyclistic-Bike-Share-Case-Study
 
-#### Problem Statement
+<ins> #### Problem Statement </ins>
 Cyclistic, a successful bike-share company, launched in 2016, slowly expanding across Chicago and gaining revenue. Within Cyclistic’s business model, there are various pricing plans that customers can choose to purchase. 
 
 The single-ride pass, full-day pass, and annual membership. Based on Cyclistic’s finance analysts, customers that purchase the annual membership are much more profitable than those that choose the single and full day passes. Therefore, in order for Cyclistic to generate more revenue and further grow, Cyclistic must figure out how to convert those casual riders to annual riders. This can be done by analyzing the differences between the current casual and annual riders. Looking at this data will allow Cyclistic to make an informed decision on how to maximize revenue in the near future.
-
 
 #### Data Security & Organization
 The data is located on Cyclistic’s historical trip data website, from which we can download the data file. It is organized in an excel csv format, with data columns for unique ride-ids, type of bike ridden, ride-start and ride end time, start location names and ids, end-locations names and ids, starting and ending latitude and longitude numbers, and member status. There are no issues with credibility within this dataset because no rides have been omitted from the data. It represents the census of cyclistic rides, removing the chance of sampling bias or the chance that the dataset is not representative of the entire population. 
@@ -12,7 +11,6 @@ The data is located on Cyclistic’s historical trip data website, from which we
 Because this data has been made publicly available under the LLC data license agreement, we are able to use it without penalty or accessibility concerns. Data such as personal identification and credit card numbers have not been included within this dataset in order to protect and respect the rider’s right to privacy. 
 
 To make sure that this dataset is ready for merging, cleaning, and analysis, we'll first have to ensure that all columns match up correctly. This includes renaming columns, rerouting data, dropping unneeded columns, and ensuring data types are consistent within each quarterly period to maintain an organized standard structure. Checking and revising this was the first priority. The four quarterly datasets were then merged into a complete dataset.
-
 
 #### Data Cleaning & Transformation
 
@@ -26,7 +24,6 @@ Addition #2: Currently, there are columns that tell us the start_station id/name
 
 After implementing the ride_duration column, I went back and checked if the durations were all positive using a quick sign-check function. Since the function did not output zero, it means that there are some zeros or negative ones within the sign check column. This means that we can conclude there are negative ride durations within the column, possibly due to Cyclistic taking the bikes out of service for maintenance. These all need to be removed and cleaned before continuing with the analysis.
 
-
 #### Analysis
 
 We'll be analyzing the two different member types by first calculating different statistics that they each have and creating visualizations based off of those results. These will allow us to better visualize the data given. Our first graph will compare the number of rides per day between each member type, our second one will compare the average duration of each ride per day between each member type, our third one will compare the number of rides per month between each member type, and our fourth graph will compare the number of rides per hour between each member type. 
@@ -35,21 +32,17 @@ We'll be analyzing the two different member types by first calculating different
 
 Graph #1 (Number of Rides per Day for each Member Type): This graph shows that the number of rides for cyclistic members increase during the weekdays and greatly drops off during the weekends. However, for casual members this is the opposite. The number of rides increases during the weekends and decreases during the weekdays. This is likely because casual members are using the cyclistic bikes for weekend fun and excursions in Chicago. During the weekdays, the casual customers have to return back to work and don't have free time to use their bikes to sight-see and travel around the city. For Cyclistic members, these people most likely use their bike to travel to and from their workplaces. This can be further analyzed by creating a visualization for frequency of bike rides against time among cyclistic members.
 
-
 ![Graph #2](https://github.com/Equinnax711/Cyclistic-Bike-Share-Case-Study/blob/8b21674175a38f0d30a1d1b6b15b5c5b9385286c/Graphs/Bike%20Share%20Graph%20%232.jpg)
 
 Graph #2 (Average Duration of Rides per Day for each Member Type): Looking at the cyclistic members, the average duration is quite constant, with a slight increase on Sundays and Saturdays. The average duration for members is also much lower than the average duration for a casual member bike ride on all days. This provides further evidence towards cyclistic members using the bike service to go to and from their workplaces, as they travel the same distance every workday and only use the bike for that specific commute. Casual members have a much higher average duration across the entire week that vary from day to day. This provides evidence towards a more relaxed and longer bike ride, with them renting the bike for longer to go around the city to take in the views.
-
 
 ![Graph #3](https://github.com/Equinnax711/Cyclistic-Bike-Share-Case-Study/blob/8b21674175a38f0d30a1d1b6b15b5c5b9385286c/Graphs/Bike%20Share%20Graph%20%233.jpg)
 
 Graph #3 (Number of Rides per Month for each Member Type): Looking at this graph, we can see that ride-share bike usage spikes during the summer months for both casual and member users. This is most likely due to the better weather outside, allowing them to get out and bike instead of staying indoors.
 
-
 ![Graph #4](https://github.com/Equinnax711/Cyclistic-Bike-Share-Case-Study/blob/8b21674175a38f0d30a1d1b6b15b5c5b9385286c/Graphs/Bike%20Share%20Graph%20%234.jpg)
 
 Graph #4 (Number of Rides per Hour for each Member Type): Looking at the cyclistic members, we can see that the number of rides drastically spikes around 7 to 9 am and around 4 to 6 pm. This matches perfectly with the usual 8 hour workday cycle and tells us that a larger percentage of cyclistic members use the ride-share bikes to commute to work. For casual customers, the number of rides begins to ramp up from 7 am to 12 pm, slows down from 12 pm to 5 pm, and begins to drop back down at 5 pm. This graph confirms both our assumptions for why member usage spikes during the weekdays of the week and why casual usage spikes during the weekends.
-
 
 #### Advice for Marketing Analysis team
 
