@@ -32,15 +32,15 @@ We'll be analyzing the two different member types by first calculating different
 
 Graph #1 (Number of Rides per Day for each Member Type): This graph shows that the number of rides for cyclistic members increase during the weekdays and greatly drops off during the weekends. However, for casual members this is the opposite. The number of rides increases during the weekends and decreases during the weekdays. This is likely because casual members are using the cyclistic bikes for weekend fun and excursions in Chicago. During the weekdays, the casual customers have to return back to work and don't have free time to use their bikes to sight-see and travel around the city. For Cyclistic members, these people most likely use their bike to travel to and from their workplaces. This can be further analyzed by creating a visualization for frequency of bike rides against time among cyclistic members.
 
-*Insert Graph 2 here*
+![Graph #2](https://github.com/Equinnax711/Cyclistic-Bike-Share-Case-Study/blob/8b21674175a38f0d30a1d1b6b15b5c5b9385286c/Graphs/Bike%20Share%20Graph%20%232.jpg)
 
 Graph #2 (Average Duration of Rides per Day for each Member Type): Looking at the cyclistic members, the average duration is quite constant, with a slight increase on Sundays and Saturdays. The average duration for members is also much lower than the average duration for a casual member bike ride on all days. This provides further evidence towards cyclistic members using the bike service to go to and from their workplaces, as they travel the same distance every workday and only use the bike for that specific commute. Casual members have a much higher average duration across the entire week that vary from day to day. This provides evidence towards a more relaxed and longer bike ride, with them renting the bike for longer to go around the city to take in the views.
 
-*Insert Graph 3 here*
+![Graph #3](https://github.com/Equinnax711/Cyclistic-Bike-Share-Case-Study/blob/8b21674175a38f0d30a1d1b6b15b5c5b9385286c/Graphs/Bike%20Share%20Graph%20%233.jpg)
 
 Graph #3 (Number of Rides per Month for each Member Type): Looking at this graph, we can see that ride-share bike usage spikes during the summer months for both casual and member users. This is most likely due to the better weather outside, allowing them to get out and bike instead of staying indoors.
 
-*Insert Graph 3 here*
+![Graph #4](https://github.com/Equinnax711/Cyclistic-Bike-Share-Case-Study/blob/8b21674175a38f0d30a1d1b6b15b5c5b9385286c/Graphs/Bike%20Share%20Graph%20%234.jpg)
 
 Graph #4 (Number of Rides per Hour for each Member Type): Looking at the cyclistic members, we can see that the number of rides drastically spikes around 7 to 9 am and around 4 to 6 pm. This matches perfectly with the usual 8 hour workday cycle and tells us that a larger percentage of cyclistic members use the ride-share bikes to commute to work. For casual customers, the number of rides begins to ramp up from 7 am to 12 pm, slows down from 12 pm to 5 pm, and begins to drop back down at 5 pm. This graph confirms both our assumptions for why member usage spikes during the weekdays of the week and why casual usage spikes during the weekends.
 
