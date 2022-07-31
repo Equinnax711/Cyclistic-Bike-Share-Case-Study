@@ -28,7 +28,7 @@ After implementing the ride_duration column, I went back and checked if the dura
 
 We'll be analyzing the two different member types by first calculating different statistics that they each have and creating visualizations based off of those results. These will allow us to better visualize the data given. Our first graph will compare the number of rides per day between each member type, our second one will compare the average duration of each ride per day between each member type, our third one will compare the number of rides per month between each member type, and our fourth graph will compare the number of rides per hour between each member type. 
 
-![Bike Share Graph #1](/Graphs/Bike Share Graph #1.jpg) 
+![](/Graphs/Bike Share Graph #1.jpg) 
 
 Graph #1 (Number of Rides per Day for each Member Type): This graph shows that the number of rides for cyclistic members increase during the weekdays and greatly drops off during the weekends. However, for casual members this is the opposite. The number of rides increases during the weekends and decreases during the weekdays. This is likely because casual members are using the cyclistic bikes for weekend fun and excursions in Chicago. During the weekdays, the casual customers have to return back to work and don't have free time to use their bikes to sight-see and travel around the city. For Cyclistic members, these people most likely use their bike to travel to and from their workplaces. This can be further analyzed by creating a visualization for frequency of bike rides against time among cyclistic members.
 
