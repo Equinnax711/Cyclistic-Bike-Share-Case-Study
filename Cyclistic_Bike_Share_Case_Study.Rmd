@@ -209,43 +209,32 @@ grouped_data_month <- all_trips_v2 %>% group_by(member_casual, month) %>% summar
 grouped_data_month
 ```
 ```{r}
+#Grouped data by member type and hour
 grouped_data_hour <- all_trips_v2 %>% group_by(member_casual, hour) %>% summarise(number_of_rides = n(), .groups = 'drop') %>% arrange(member_casual, hour)
 grouped_data_hour
 ```
 
-
 ```{r}
-#Line graph of number of bike rides per group per day (Graph #1)
-line_bikerides_per_group_per_day <- grouped_data_week %>% ggplot(aes(x = day_of_week, y = number_of_rides, group = member_casual, color = member_casual)) + geom_line() + labs(title = "Number of Rides per Day for each Member Type", x = "Day of Week", y = "Number of Rides")
-line_bikerides_per_group_per_day
-```
-
-```{r}
-#Bar graph of number of bike rides per group per day (Graph #2)
+#Bar graph of number of bike rides per group per day (Graph #1)
 bar_bikerides_per_group_per_day <- grouped_data_week %>% ggplot(aes(x = day_of_week, y = number_of_rides, fill = member_casual)) + geom_col(position = "dodge") + labs(title = "Number of Rides per Day for each Member Type", x = "Day of Week", y = "Number of Rides")
 bar_bikerides_per_group_per_day
 
 ```
-```{r}
-#Line graph of average length of bike rides per group per day
-avg_length_line_bikerides_per_group_per_day <- grouped_data_week %>% ggplot(aes(x = day_of_week, y = average_duration, group = member_casual, color = member_casual)) + geom_line() + labs(title = "Average Duration of Rides per Day for each Member Type", x = "Day of Week", y = "Average Duration")
-avg_length_line_bikerides_per_group_per_day
-```
 
 ```{r}
-#Bar graph of average length of bike rides per group per day (Graph #3)
+#Bar graph of average length of bike rides per group per day (Graph #2)
 avg_length_bar_bikerides_per_group_per_day <- grouped_data_week %>% ggplot(aes(x = day_of_week, y = average_duration, fill = member_casual)) + geom_col(position = "dodge") + labs(title = "Average Duration of Rides per Day for each Member Type", x = "Day of Week", y = "Average Duration")
 avg_length_bar_bikerides_per_group_per_day
 ```
 
 ```{r}
-#number of rides per month for each member type
+#number of rides per month for each member type (Graph #3)
 bar_bikerides_per_group_per_month <- grouped_data_month %>% ggplot(aes(x = month, y = number_of_rides, fill = member_casual)) + geom_col(position = "dodge") + labs(title = "Number of Rides per Month for each Member Type", x = "Month", y = "Number of Rides")
 bar_bikerides_per_group_per_month
 ```
 
 ```{r}
-#Most frequent bike ride starting hour for each member type
+#Most frequent bike ride starting hour for each member type (Graph #4)
 bar_num_bikerides_per_each_hour <- grouped_data_hour %>% ggplot(aes(x = hour, y = number_of_rides, fill = member_casual)) + geom_col(position = "dodge") + labs(title = "Number of Rides per Hour for each Member Type", x = "Hour", y = "Number of Rides")
 bar_num_bikerides_per_each_hour
 ```
