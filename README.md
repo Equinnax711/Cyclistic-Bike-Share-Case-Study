@@ -1,6 +1,6 @@
 # Cyclistic-Bike-Share-Case-Study
 
-<ins> #### Problem Statement </ins>
+#### Problem Statement
 Cyclistic, a successful bike-share company, launched in 2016, slowly expanding across Chicago and gaining revenue. Within Cyclistic’s business model, there are various pricing plans that customers can choose to purchase. 
 
 The single-ride pass, full-day pass, and annual membership. Based on Cyclistic’s finance analysts, customers that purchase the annual membership are much more profitable than those that choose the single and full day passes. Therefore, in order for Cyclistic to generate more revenue and further grow, Cyclistic must figure out how to convert those casual riders to annual riders. This can be done by analyzing the differences between the current casual and annual riders. Looking at this data will allow Cyclistic to make an informed decision on how to maximize revenue in the near future.
